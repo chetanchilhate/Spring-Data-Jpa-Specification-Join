@@ -22,14 +22,19 @@ public class HomeController {
   @GetMapping("/departments")
   public Page<Department> getDepartments() {
 
-    Specification<Department> spec = (root, query, cb) -> {
+    Specification<Department> spec1 = (root, query, cb) -> {
       root.fetch("employees", JoinType.INNER);
       return null;
     };
+    
+    Specification<Department> spec2 = (root, query, cb) -> {
+      return cb.equal(root.get("name"), "IT");
+    };
+    
 
     Pageable pageable = PageRequest.of(0, 10);
 
-    return repository.findAll(spec, pageable);
+    return repository.findAll(Specification.where(spec1).and(spec2), pageable);
 
   }
 
